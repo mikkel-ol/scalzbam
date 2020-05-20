@@ -3,23 +3,30 @@ ScalzBam = LibStub("AceAddon-3.0"):NewAddon("ScalzBam", "AceConsole-3.0", "AceEv
 
 -----------------------------------------------------
 
-function ScalzBam:HandleCombatEvent(spellName, dmg, inInstance)
+function ScalzBam:HandleCombatEvent(spellName, dmg, destName, inInstance)
 	local currentRecord = self.db.char.records[spellName]
 
 	-- First time
 	if (currentRecord == nil) then
-		currentRecord = 0
+		currentRecord = {
+			dmg = 0,
+			mob = nil,
+		}
 	end
 
-	if (dmg > currentRecord) then
+	if (dmg > currentRecord.dmg) then
 		-- new record
-		self.db.char.records[spellName] = dmg
+		currentRecord.dmg = dmg
+		currentRecord.mob = destName
+		self.db.char.records[spellName] = currentRecord
 
 		-- play audio if enabled
 		if (self.db.char.audio) then PlaySoundFile("Interface\\AddOns\\ScalzBam\\Assets\\crazy.ogg") end
 
 		-- print
-		self:Print("New highscore, " .. spellName .. " with " .. dmg .. "!")
+		msg = "New highscore, " .. spellName .. " with " .. dmg .. "!"
+		if self.db.char.showMobName then msg = msg .. " [" .. currentRecord.mob .. "]" end
+		self:Print(msg)
 
 		-- tell
 		if self.db.char.post.enabled then self:Post(spellName, dmg, inInstance) end
@@ -43,14 +50,17 @@ end
 
 function ScalzBam:ShowHighscores()
 	-- testing
-	--self.db.char.records["TESTING"] = 200
+	--self.db.char.records["TESTING"] = {
+	--	dmg = 300,
+	--	mob = "Big dick mob"
+	--}
 
 	local AceGUI = LibStub("AceGUI-3.0")
 
 	-- Create a container frame
 	local frame = AceGUI:Create("Frame")
-	frame:SetWidth(380)
-	frame:SetHeight(400)
+	frame:SetWidth(480)
+	frame:SetHeight(500)
 	frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
 	frame:SetTitle("Highscores")
 	frame:SetStatusText("Are you proud of yourself?")
@@ -65,11 +75,12 @@ function ScalzBam:ShowHighscores()
 	-- Iterate all highscores
 	--
 	local count = 0
-	for spell, damage in pairs(self.db.char.records) do
+	for spell, record in pairs(self.db.char.records) do
 		-- Create highscore container
 		local container = AceGUI:Create("SimpleGroup")
 		container:SetAutoAdjustHeight(false)
 		container:SetLayout("Flow")
+		container:SetFullWidth(true)
 		container:SetHeight(100)
 
 		local _, __, spellIcon = GetSpellInfo(spell)
@@ -85,7 +96,7 @@ function ScalzBam:ShowHighscores()
 				local _, type = GetInstanceInfo()
 				if (type == "none") then isInInstance = false
 				else isInInstance = true end
-				if self.db.char.post.enabled then self:Post(spell, damage, isInInstance, true) end
+				if self.db.char.post.enabled then self:Post(spell, record.dmg, isInInstance, true) end
 			else
 				self:Print("You do not have a channel selected")
 				self:Print("Select one with '/bam channel'")
@@ -96,7 +107,9 @@ function ScalzBam:ShowHighscores()
 		local l = AceGUI:Create("Label")
 		l:SetFullWidth(true)
 		l:SetFont("Fonts\\FRIZQT__.TTF", 16)
-		l:SetText("|cffe6d417" .. spell .. "|r" .. " with |cffff0000" .. damage .. "|r damage!")
+		local msg = "|cffe6d417" .. spell .. "|r" .. " with |cffff0000" .. record.dmg .. "|r damage!"
+		if self.db.char.showMobName and record.mob then msg = msg .. " |cff909090[" .. record.mob .. "]|r" end
+		l:SetText(msg)
 		container:AddChild(l)
 
 		count = count + 1
@@ -112,12 +125,13 @@ function ScalzBam:ShowHighscores()
 	frame:DoLayout()
 end
 
-local noOfFavTrolls = 0
+noOfFavTrolls = 0
 function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	local eventInfo = { CombatLogGetCurrentEventInfo() }
 	local type = eventInfo[2]
 	local sourceGUID = eventInfo[4]
 	local sourceFlags = eventInfo[6]
+	local destName = eventInfo[9]
 	local isTotem = (bit.band(sourceFlags, 0x00002001) == 0x00002001)
 
 	if (self.db.char.debug) then
@@ -126,7 +140,7 @@ function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	end
 
 	-- Fav troll
-	if (UnitGUID("player") == "Player-4706-0141E043") then
+	if (UnitGUID("player") == "Player-4706-012C0C14") then
 		-- check time
 		timestamp = time()
 		randomWednesdayAt2100 = 1589396400
@@ -134,15 +148,15 @@ function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 		secondsInTwoHours = 7200
 		secondsSinceWednesdayAt2100 = (timestamp-randomWednesdayAt2100) % secondsInAWeek
 
-		-- is it wednesday around 21:30?
-		if (secondsSinceWednesdayAt2100 > 1800) and (secondsSinceWednesdayAt2100 < 1900) then
+		-- is it wednesday around 21:05?
+		if (secondsSinceWednesdayAt2100 > 300) and (secondsSinceWednesdayAt2100 < 400) then
 			-- do this first
 			if (noOfFavTrolls == 0) then
 				SendChatMessage("has suddenly decided not raid lead.", "EMOTE")
 				noOfFavTrolls = noOfFavTrolls + 1
 			end
-		-- is it wednesday around 21:45?
-		elseif (secondsSinceWednesdayAt2100 > 2700) and (secondsSinceWednesdayAt2100 < 2800) then
+		-- is it wednesday around 21:20?
+		elseif (secondsSinceWednesdayAt2100 > 1200) and (secondsSinceWednesdayAt2100 < 1300) then
 			-- do this second
 			if (noOfFavTrolls == 1) then
 				SendChatMessage("has once again decided to raid lead.", "EMOTE")
@@ -194,7 +208,7 @@ function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 		return
 	end
 
-	self:HandleCombatEvent(spellName, amount, instanceType)
+	self:HandleCombatEvent(spellName, amount, destName, instanceType)
 end
 
 -------------------------------------------------------------------------

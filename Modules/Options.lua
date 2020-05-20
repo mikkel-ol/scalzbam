@@ -6,6 +6,7 @@ local dbDefaults = {
 	char = {
 		enabled = true,
 		records = {},
+		showMobName = false,
 		channel = nil,
 		audio = false,
 		debug = false,
@@ -58,6 +59,16 @@ function ScalzBam:OnInitialize()
 	-- Clear old AA key
 	self.db.char.records["AA"] = nil
 
+	-- Move record numbers into new table
+	for key, value in pairs(self.db.char.records) do
+		if type(value) == "number" then
+			self.db.char.records[key] = {
+				dmg = value,
+				mob = nil
+			}
+		end
+	end
+
 	if (self.db.char.enabled) then self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	else self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	end
@@ -83,6 +94,7 @@ ScalzBam_Options = {
     		order = 0,
     		args = {
     			enable = {
+					order = 1, -- first
 					name = "Addon enable",
 					desc = "Enables / disables the addon",
 					type = "toggle",
@@ -101,8 +113,16 @@ ScalzBam_Options = {
 		            type = 'toggle',
 		            set = function(info, val) ScalzBam.db.char.audio = val end,
 		            get = function(info) return ScalzBam.db.char.audio end,
-		        },
+				},
+				mobName = {
+					name = "Show mob name",
+					desc = "Display name of mob on highscores",
+					type = "toggle",
+					set = function(info, val) ScalzBam.db.char.showMobName = val end,
+					get = function(info) return ScalzBam.db.char.showMobName end,
+				},
 		        minimap = {
+					order = -1, -- last
 		        	name = "Minimap icon",
 		        	desc = "Enables / disables minimap icon",
 		        	type = "toggle",
@@ -196,7 +216,8 @@ ScalzBam_Options = {
 		        },
                 clear = {
 		        	name = 'Clear highscores',
-		        	desc = 'Clear entire collection of highscores',
+					desc = 'Clear entire collection of highscores',
+					confirm = function() return "Are you sure you want to clear entire database of records?" end,
 		            type = 'execute',
 		            func = function() 
 			            	ScalzBam.db.char.records = {}
@@ -212,7 +233,8 @@ ScalzBam_Options = {
     		args = {
 		        debugmode = {
 		        	name = "Debug mode",
-		        	desc = "Turn on / off debug mode",
+					desc = [[Turn on / off debug mode
+CAREFUL! WILL OUTPUT ALOT!]],
 		        	type = "toggle",
 		        	set  = function(info, val)
 			        		ScalzBam.db.char.debug = val

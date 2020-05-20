@@ -25,5 +25,7 @@ function ScalzBam:Post(spell, dmg, inInstance, isShowoff)
 	else msg = "[ScalzBam] BAM! " .. spell .. " crit for " .. dmg .. "!"
 	end
 
+	if self.db.char.showMobName and self.db.char.records[spell].mob then msg = msg .. " [" .. self.db.char.records[spell].mob .. "]" end
+
 	SendChatMessage(msg, channel, "Common", channelIndex)
 end
