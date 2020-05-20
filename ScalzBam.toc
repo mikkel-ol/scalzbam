@@ -1,0 +1,16 @@
+## Interface: 11304
+## Title: ScalzBam
+## Version: 1.0
+## Author: Scalz, 2020
+## Notes: BamBam
+## SavedVariables: ScalzBamDB
+
+# includes
+embeds.xml
+
+# main
+ScalzBam.lua
+
+# modules -- needs to be included after main
+Modules\HighscoreFrame.lua
+Modules\Options.lua
