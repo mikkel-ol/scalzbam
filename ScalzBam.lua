@@ -3,33 +3,6 @@ ScalzBam = LibStub("AceAddon-3.0"):NewAddon("ScalzBam", "AceConsole-3.0", "AceEv
 
 -----------------------------------------------------
 
-function ScalzBam:Print(msg)
-	print("|cfff26113ScalzBam|r:", msg)
-end
-
-function ScalzBam:Error(msg)
-	print("|cffff0000Error|r:", msg)
-end
-
-function ScalzBam:Post(spell, dmg, inInstance, isShowoff)
-	local channel = string.upper(self.db.char.post.channel)
-	local msg, channelIndex
-
-	-- handle blocked say/yell
-	if not (inInstance) and ((channel == "say") or (channel == "yell")) then
-		self:Error("Could not display in '/" .. channel .. "' channel")
-		self:Error("You are not in an instance")
-	elseif channel == "CHANNEL" then
-		channelIndex = GetChannelName(self.db.char.post.custom.channel)
-	end
-
-	if (isShowoff) then msg = "[ScalzBam] [Highscore] " .. spell .. ", " .. dmg .. "!"
-	else msg = "[ScalzBam] BAM! " .. spell .. " crit for " .. dmg .. "!"
-	end
-
-	SendChatMessage(msg, channel, "Common", channelIndex)
-end
-
 function ScalzBam:HandleCombatEvent(spellName, dmg, inInstance)
 	local currentRecord = self.db.char.records[spellName]
 
@@ -43,9 +16,7 @@ function ScalzBam:HandleCombatEvent(spellName, dmg, inInstance)
 		self.db.char.records[spellName] = dmg
 
 		-- play audio if enabled
-		if (self.db.char.audio) then
-			PlaySoundFile("Interface\\AddOns\\ScalzBam\\Assets\\crazy.ogg")
-		end
+		if (self.db.char.audio) then PlaySoundFile("Interface\\AddOns\\ScalzBam\\Assets\\crazy.ogg") end
 
 		-- print
 		self:Print("New highscore, " .. spellName .. " with " .. dmg .. "!")
@@ -224,15 +195,6 @@ function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	end
 
 	self:HandleCombatEvent(spellName, amount, instanceType)
-end
-
-function ScalzBam:OnInitialize()
-end
-
-function ScalzBam:OnEnable()
-end
-
-function ScalzBam:OnDisable()
 end
 
 -------------------------------------------------------------------------

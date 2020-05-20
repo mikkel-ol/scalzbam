@@ -14,3 +14,4 @@ ScalzBam.lua
 # modules -- needs to be included after main
 Modules\HighscoreFrame.lua
 Modules\Options.lua
+Modules\Print.lua
