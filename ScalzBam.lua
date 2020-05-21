@@ -125,7 +125,6 @@ function ScalzBam:ShowHighscores()
 	frame:DoLayout()
 end
 
-noOfFavTrolls = 0
 function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	local eventInfo = { CombatLogGetCurrentEventInfo() }
 	local type = eventInfo[2]
@@ -137,39 +136,6 @@ function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	if (self.db.char.debug) then
 		print("Type: " .. type)
 		print("SourceFlags: " .. string.format( "0x%8.8X", sourceFlags ))
-	end
-
-	-- Fav troll
-	if (UnitGUID("player") == "Player-4706-012C0C14") then
-		-- check time
-		timestamp = time()
-		randomWednesdayAt2100 = 1589396400
-		secondsInAWeek = 604800
-		secondsInTwoHours = 7200
-		secondsSinceWednesdayAt2100 = (timestamp-randomWednesdayAt2100) % secondsInAWeek
-
-		-- is it wednesday around 21:05?
-		if (secondsSinceWednesdayAt2100 > 300) and (secondsSinceWednesdayAt2100 < 400) then
-			-- do this first
-			if (noOfFavTrolls == 0) then
-				SendChatMessage("has suddenly decided not raid lead.", "EMOTE")
-				noOfFavTrolls = noOfFavTrolls + 1
-			end
-		-- is it wednesday around 21:20?
-		elseif (secondsSinceWednesdayAt2100 > 1200) and (secondsSinceWednesdayAt2100 < 1300) then
-			-- do this second
-			if (noOfFavTrolls == 1) then
-				SendChatMessage("has once again decided to raid lead.", "EMOTE")
-				noOfFavTrolls = noOfFavTrolls + 1
-			end
-		-- is it wednesday around 22:00?
-		elseif (secondsSinceWednesdayAt2100 > 3600) and (secondsSinceWednesdayAt2100 < 3700) then
-			-- do this third
-			if (noOfFavTrolls == 2) then
-				SendChatMessage("Listen up! Everyone gets 100g each from the guild bank!", "YELL")
-				noOfFavTrolls = noOfFavTrolls + 1
-			end
-		end
 	end
 
 	-- Ignore from anything other than self, pet or totem
