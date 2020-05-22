@@ -1,5 +1,8 @@
 -- Create stub
 ScalzBam = LibStub("AceAddon-3.0"):GetAddon("ScalzBam")
+ScalzBam_Options = ScalzBam:NewModule("ScalzBam_Options", "AceEvent-3.0", "AceHook-3.0")
+
+M = ScalzBam_Options
 
 -- Default DB settings
 local dbDefaults = {
@@ -51,26 +54,26 @@ local scalzLDB = LibStub("LibDataBroker-1.1"):NewDataObject("ScalzBam", {
 	end,
 })
 
-function ScalzBam:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("ScalzBamDB", dbDefaults)
+function M:OnInitialize()
+	ScalzBam.db = LibStub("AceDB-3.0"):New("ScalzBamDB", dbDefaults)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("ScalzBam")
-	icon:Register("ScalzBam", scalzLDB, self.db.char.minimap)
+	icon:Register("ScalzBam", scalzLDB, ScalzBam.db.char.minimap)
 
 	-- Clear old AA key
-	self.db.char.records["AA"] = nil
+	ScalzBam.db.char.records["AA"] = nil
 
 	-- Move record numbers into new table
-	for key, value in pairs(self.db.char.records) do
+	for key, value in pairs(ScalzBam.db.char.records) do
 		if type(value) == "number" then
-			self.db.char.records[key] = {
+			ScalzBam.db.char.records[key] = {
 				dmg = value,
 				mob = nil
 			}
 		end
 	end
 
-	if (self.db.char.enabled) then self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	else self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	if (ScalzBam.db.char.enabled) then ScalzBam:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	else ScalzBam:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	end
 end
 
