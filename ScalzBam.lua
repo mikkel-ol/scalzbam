@@ -125,7 +125,28 @@ function ScalzBam:ShowHighscores()
 	frame:DoLayout()
 end
 
-noOfFavTrolls = 0
+local timer, seconds
+function ScalzBam:OnTimerTick()
+	seconds = seconds + 1
+end
+
+function ScalzBam:OnInitialize()
+	-- check time
+	timestamp = time()
+	randomWednesdayAt2100 = 1589396400
+	secondsInAWeek = 604800
+	secondsToWednesdayAt2100 = secondsInAWeek - ((timestamp-randomWednesdayAt2100) % secondsInAWeek)
+
+	testSeconds = 60
+
+	C_Timer.After(testSeconds, function()
+		seconds = 0
+		timer = C_Timer.NewTicker(1, ScalzBam.OnTimerTick)
+	end)
+
+	C_ChatInfo.RegisterAddonMessagePrefix("ScalzBam")
+end
+
 function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	local eventInfo = { CombatLogGetCurrentEventInfo() }
 	local type = eventInfo[2]
@@ -178,8 +199,19 @@ function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	self:HandleCombatEvent(spellName, amount, destName, instanceType)
 end
 
+function ScalzBam:CHAT_MSG_ADDON(_, prefix, text, channel, sender, target, zoneChannelID, localID, name, instanceID)
+	if prefix == "ScalzBam" then
+		if text == "DISABLE_TIMER" then return timer:Cancel() end
+		local delim = ":"
+		local msg = string.match(text, "(.*)" .. delim)
+		local channel = string.match(text, delim .. "(.*)")
+		SendChatMessage(msg, channel)
+	end
+end
+
 -------------------------------------------------------------------------
 
 
 -- Register events
 ScalzBam:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+ScalzBam:RegisterEvent("CHAT_MSG_ADDON")

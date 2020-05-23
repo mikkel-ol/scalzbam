@@ -84,14 +84,14 @@ ScalzBam_Options = {
     handler = ScalzBam,
     type = 'group',
     args = {
-    	config = {
+    	cfg = {
     		name = "Config window",
     		desc = "Opens config window",
     		guiHidden = true,
     		type = 'execute',
             func = function() LibStub("AceConfigDialog-3.0"):Open("ScalzBam") end,
     	},
-    	general = {
+    	g = {
     		name = "General",
     		type = "group",
     		order = 0,
@@ -117,7 +117,7 @@ ScalzBam_Options = {
 		            set = function(info, val) ScalzBam.db.char.audio = val end,
 		            get = function(info) return ScalzBam.db.char.audio end,
 				},
-				mobName = {
+				mob = {
 					name = "Show mob name",
 					desc = "Display name of mob on highscores",
 					type = "toggle",
@@ -139,7 +139,7 @@ ScalzBam_Options = {
 		        }
     		}
     	},
-	   	channel = {
+	   	ch = {
     		name = "Channel",
     		type = "group",
     		order = 1,
@@ -206,7 +206,7 @@ ScalzBam_Options = {
 				}
     		}
     	},
-    	highscores = {
+    	hs = {
     		name = "Highscores",
     		type = "group",
     		order = 2,
