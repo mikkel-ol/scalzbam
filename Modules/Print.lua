@@ -14,7 +14,7 @@ function ScalzBam:Post(spell, dmg, inInstance, isShowoff)
 	local msg, channelIndex
 
 	-- handle blocked say/yell
-	if not (inInstance) and ((channel == "say") or (channel == "yell")) then
+	if not (inInstance) and ((string.upper(channel) == "SAY") or (string.upper(channel) == "YELL")) then
 		self:Error("Could not display in '/" .. channel .. "' channel")
 		self:Error("You are not in an instance")
 	elseif channel == "CHANNEL" then
