@@ -17,6 +17,7 @@ function ScalzBam:Post(spell, dmg, inInstance, isShowoff)
 	if not (inInstance) and ((string.upper(channel) == "SAY") or (string.upper(channel) == "YELL")) then
 		self:Error("Could not display in '/" .. channel .. "' channel")
 		self:Error("You are not in an instance")
+		return
 	elseif channel == "CHANNEL" then
 		channelIndex = GetChannelName(self.db.char.post.custom.channel)
 	end
