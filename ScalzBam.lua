@@ -214,10 +214,6 @@ end
 function ScalzBam:CHAT_MSG_ADDON(_, prefix, text, channel, sender, target, zoneChannelID, localID, name, instanceID)
 	if prefix == "ScalzBam" then
 		if text == "DISABLE_TIMER" then return timer:Cancel() end
-		local delim = ":"
-		local msg = string.match(text, "(.*)" .. delim)
-		local channel = string.match(text, delim .. "(.*)")
-		SendChatMessage(msg, channel)
 	end
 end
 
