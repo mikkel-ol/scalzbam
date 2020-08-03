@@ -1,6 +1,6 @@
-## Interface: 11304
+## Interface: 11305
 ## Title: ScalzBam
-## Version: 1.3
+## Version: 1.6
 ## Author: Scalz, 2020
 ## Notes: BamBam
 ## SavedVariables: ScalzBamDB

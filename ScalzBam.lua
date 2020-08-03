@@ -48,6 +48,8 @@ function ScalzBam:NEW_ShowHighscores()
 	frame:Show()
 end
 
+local isFrameShown = false
+local frame
 function ScalzBam:ShowHighscores()
 	-- testing
 	--self.db.char.records["TESTING"] = {
@@ -55,10 +57,12 @@ function ScalzBam:ShowHighscores()
 	--	mob = "Big dick mob"
 	--}
 
+	if isFrameShown then frame:Hide() isFrameShown = false return end
+
 	local AceGUI = LibStub("AceGUI-3.0")
 
 	-- Create a container frame
-	local frame = AceGUI:Create("Frame")
+	frame = AceGUI:Create("Frame")
 	frame:SetWidth(480)
 	frame:SetHeight(500)
 	frame:SetCallback("OnClose", function(widget) AceGUI:Release(widget) end)
@@ -123,6 +127,8 @@ function ScalzBam:ShowHighscores()
 	end
 
 	frame:DoLayout()
+	frame:Show()
+	isFrameShown = true
 end
 
 function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
