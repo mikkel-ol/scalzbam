@@ -125,40 +125,6 @@ function ScalzBam:ShowHighscores()
 	frame:DoLayout()
 end
 
-local timer, seconds
-function ScalzBam:OnTimerTick()
-	seconds = seconds + 1
-
-	-- 20:55
-	if seconds == 300 then
-		SendChatMessage("has suddenly decided not raid lead.", "EMOTE")
-	end
-	-- 20:57
-	if seconds == 420 then
-		SendChatMessage("has once again decided to raid lead.", "EMOTE")
-	end
-end
-
-function ScalzBam:OnInitialize()
-	-- check time
-	timestamp = time()
-	randomWednesdayAt2050 = 1589395800
-	secondsInAWeek = 604800
-	secondsToWednesdayAt2050 = secondsInAWeek - ((timestamp-randomWednesdayAt2050) % secondsInAWeek)
-
-	testSeconds = 60
-
-	-- Fav
-	if (UnitGUID("player") == "Player-4706-012C0C14") then
-			C_Timer.After(secondsToWednesdayAt2050, function()
-				seconds = 0
-				timer = C_Timer.NewTicker(1, ScalzBam.OnTimerTick)
-			end)
-	end
-
-	C_ChatInfo.RegisterAddonMessagePrefix("ScalzBam")
-end
-
 function ScalzBam:COMBAT_LOG_EVENT_UNFILTERED()
 	local eventInfo = { CombatLogGetCurrentEventInfo() }
 	local type = eventInfo[2]
